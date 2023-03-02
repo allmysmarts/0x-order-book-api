@@ -1,31 +1,33 @@
-import React from 'react';
+import React from "react";
+import { WagmiConfig, createClient, configureChains, goerli } from "wagmi";
+import { infuraProvider } from "wagmi/providers/infura";
+import { publicProvider } from "wagmi/providers/public";
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import Main from "./Components/Main";
 
-import Header from './Components/Header';
-import CreateOrder from './Components/CreateOrder';
-import FillOrder from './Components/FillOrder';
-import OrderList from './Components/OrderList';
-import Rebase from './Components/Rebase';
+// Configure chains & providers with the Alchemy provider.
+// Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
+const { chains, provider, webSocketProvider } = configureChains(
+  [goerli],
+  [
+    infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID || "" }),
+    publicProvider(),
+  ]
+);
+
+// Set up client
+const client = createClient({
+  autoConnect: true,
+  connectors: [new MetaMaskConnector({ chains })],
+  provider,
+  webSocketProvider,
+});
 
 function App() {
   return (
-    <div className="App">
-      <Header />
-      <div className="container">
-        <div className="row">
-          <div className='col-md-4'>
-            <CreateOrder />
-          </div>
-          <div className='col-md-4'>
-            <FillOrder />
-          </div>
-          <div className='col-md-4'>
-            <Rebase />
-          </div>
-        </div>
-
-        <OrderList />
-      </div>
-    </div>
+    <WagmiConfig client={client}>
+      <Main />
+    </WagmiConfig>
   );
 }
 

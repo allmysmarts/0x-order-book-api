@@ -33,7 +33,7 @@ function FillOrder() {
           Check me out
         </label>
       </div>
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="btn btn-primary btn-block">
         Fill Order
       </button>
     </form>

@@ -42,7 +42,7 @@ function CreateOrder() {
         </div>
       </div>
       
-      <hr className="mb-4" />
+      <hr />
 
       <div className="form-group">
         <div className="d-flex justify-content-between">
