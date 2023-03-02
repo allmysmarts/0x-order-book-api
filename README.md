@@ -19,4 +19,5 @@ npx hardhat --network goerli verify --contract "contracts/MockUSDT.sol:MockUSDT"
 
 ## Deployed contract addresses (Goerli)
 TheRisk: [0x52eC4c36663AeAF99642542d22a0152cA4295467](https://goerli.etherscan.io/address/0x52eC4c36663AeAF99642542d22a0152cA4295467)
+
 MockUSDT: [0xCC288708225Cd10f05c16892AD49f04654c0e199](https://goerli.etherscan.io/address/0xCC288708225Cd10f05c16892AD49f04654c0e199)
