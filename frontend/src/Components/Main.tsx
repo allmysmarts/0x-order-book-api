@@ -3,7 +3,7 @@ import { useAccount } from "wagmi";
 
 import Header from "./Header";
 import ConnectWallet from "./ConnectWallet";
-import Trade from "./Trades/Trade";
+import Trade from "./Trade";
 
 function Main() {
   const { isConnected } = useAccount();

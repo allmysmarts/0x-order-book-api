@@ -3,6 +3,8 @@ import { WagmiConfig, createClient, configureChains, goerli } from "wagmi";
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+
+import { TokensProvider } from "./Contexts/TokensContext";
 import Main from "./Components/Main";
 
 // Configure chains & providers with the Alchemy provider.
@@ -26,7 +28,9 @@ const client = createClient({
 function App() {
   return (
     <WagmiConfig client={client}>
-      <Main />
+      <TokensProvider>
+        <Main />
+      </TokensProvider>
     </WagmiConfig>
   );
 }

@@ -4,16 +4,16 @@ function Rebase() {
   return (
     <form className="border rounded p-4 my-2">
       <div className="form-group">
-        <label htmlFor="exampleInputEmail1">
+        <label htmlFor="rebase-factor">
           Rebase Factor (%)
         </label>
         <input
-          type="email"
+          type="number"
           className="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
+          id="rebase-factor"
+          aria-describedby="rebase-factor-help"
         />
-        <small id="emailHelp" className="form-text text-muted">
+        <small id="rebase-factor-help" className="form-text text-muted">
           All holders balances will be rebased.
         </small>
       </div>
