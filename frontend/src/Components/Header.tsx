@@ -1,6 +1,8 @@
 import React from "react";
 import { useAccount, useDisconnect, useNetwork } from "wagmi";
 
+import { minimizeAddress } from "../utils";
+
 function Header() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
@@ -14,7 +16,7 @@ function Header() {
           <nav className="my-2 my-md-0 mr-md-3">
             <span className="p-2">{chain?.name}</span>
             <span className="p-2">
-              {address?.slice(0, 6)}...{address?.slice(-4)}
+              {minimizeAddress(address)}
             </span>
           </nav>
 

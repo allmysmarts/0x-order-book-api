@@ -1,6 +1,11 @@
 import React from "react";
+import { utils } from "ethers";
+import { useOrderbooks } from "../../Contexts/OrderbookContext";
+import { minimizeAddress } from "../../utils";
 
 function OrderList() {
+  const { orders } = useOrderbooks()
+
   return (
     <section className="mt-2">
       <h2>Orders List</h2>
@@ -10,28 +15,26 @@ function OrderList() {
             <th scope="col">#</th>
             <th scope="col">Maker</th>
             <th scope="col">Taker</th>
-            <th scope="col">Handle</th>
+            <th scope="col">MakerToken</th>
+            <th scope="col">TakerToken</th>
+            <th scope="col">MakerAmount</th>
+            <th scope="col">TakerAmount</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
+          {
+            orders.map((order, id) => (
+              <tr key={order.order.salt.toString()}>
+                <th scope="row">{id + 1}</th>
+                <td>{minimizeAddress(order.order.maker)}</td>
+                <td>{minimizeAddress(order.order.taker)}</td>
+                <td>{minimizeAddress(order.order.makerToken)}</td>
+                <td>{minimizeAddress(order.order.takerToken)}</td>
+                <td>{utils.formatEther(order.order.makerAmount)}</td>
+                <td>{utils.formatEther(order.order.takerAmount)}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </table>
     </section>

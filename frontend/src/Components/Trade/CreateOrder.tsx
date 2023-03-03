@@ -9,6 +9,7 @@ import { ApiEndpoints, TokenAddresses } from "../../Constants";
 import axios from "axios";
 
 import { useTokens } from "../../Contexts/TokensContext";
+import { useOrderbooks } from "../../Contexts/OrderbookContext";
 
 function CreateOrder() {
   const [pending, setPending] = useState(false);
@@ -26,6 +27,7 @@ function CreateOrder() {
   const { address } = useAccount();
 
   const { contracts, balances, allowances, loadBalances } = useTokens();
+  const { loadOrders } = useOrderbooks();
 
   const createOrder = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -45,6 +47,7 @@ function CreateOrder() {
       chain?.id
     ).exchangeProxy;
     // check allowance to exchangeProxy, and if insufficient then approve
+    /*
     if (parseInt(allowances["TheRisk"]) < sellAmount) {
       try {
         const txn = await contracts["TheRisk"]
@@ -58,6 +61,7 @@ function CreateOrder() {
       }
       await loadBalances(address);
     }
+    */
 
     // create limit order
     const order = new LimitOrder({
@@ -103,6 +107,9 @@ function CreateOrder() {
       );
       console.log("Response: ", resp.status);
       console.log("ResponseData: ", resp.data);
+
+      // reload open orders
+      await loadOrders();
     } catch (e) {
       console.log("Failed to sign and transmit order.");
       setPending(false);

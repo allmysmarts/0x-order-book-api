@@ -5,6 +5,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 
 import { TokensProvider } from "./Contexts/TokensContext";
+import { OrderbookProvider } from "./Contexts/OrderbookContext";
 import Main from "./Components/Main";
 
 // Configure chains & providers with the Alchemy provider.
@@ -29,7 +30,9 @@ function App() {
   return (
     <WagmiConfig client={client}>
       <TokensProvider>
-        <Main />
+        <OrderbookProvider>
+          <Main />
+        </OrderbookProvider>
       </TokensProvider>
     </WagmiConfig>
   );
