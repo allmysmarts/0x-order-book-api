@@ -4,7 +4,6 @@ import { utils as etherUtils, constants as etherConstants } from "ethers";
 import { LimitOrder } from "@0x/protocol-utils";
 import { BigNumber } from "@0x/utils";
 import { getContractAddressesForChainOrThrow } from "@0x/contract-addresses";
-import { MetamaskSubprovider } from "@0x/subproviders";
 
 import { ApiEndpoints, TokenAddresses } from "../../Constants";
 import axios from "axios";
@@ -48,9 +47,10 @@ function CreateOrder() {
     // check allowance to exchangeProxy, and if insufficient then approve
     if (parseInt(allowances["TheRisk"]) < sellAmount) {
       try {
-        await contracts["TheRisk"]
+        const txn = await contracts["TheRisk"]
           .connect(signer)
           .approve(exchangeProxy, etherConstants.MaxUint256);
+        await txn.wait();
       } catch (e) {
         console.log("Failed to approve TheRisk.");
         setPending(false);
@@ -98,7 +98,7 @@ function CreateOrder() {
 
       // submit order
       const resp = await axios.post(
-        `${ApiEndpoints[chain.id.toString()]}/orderbook/v4/order`,
+        `${ApiEndpoints[chain.id.toString()]}/orderbook/v1/order`,
         signedOrder
       );
       console.log("Response: ", resp.status);
