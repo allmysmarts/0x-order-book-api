@@ -14,18 +14,18 @@ import { TokenAddresses } from "../Constants";
 import TheRiskABI from "../ABIs/TheRisk.json";
 import ERC20ABI from "../ABIs/ERC20.json";
 
-type TokensList = {
+type TokensSlice = {
   contracts: Record<string, Contract | undefined>;
   allowances: Record<string, string>;
   balances: Record<string, string>;
-  loadBalances: () => void;
+  loadBalances: (account: string) => void;
 };
 
-export const TokensContext = React.createContext<TokensList>({
-  contracts: {},
-  allowances: {},
-  balances: {},
-  loadBalances: () => {},
+export const TokensContext = React.createContext<TokensSlice>({
+  contracts: {},  // ethers.Contract instances
+  allowances: {}, // account's allowance to exchangeProxy
+  balances: {},   // token balances
+  loadBalances: (account: string) => {},  // read balances of connected wallet from token contracts
 });
 
 export const useTokens = () => {
@@ -49,12 +49,12 @@ export const TokensProvider = ({ children }: { children: ReactNode }) => {
         ? {}
         : {
             TheRisk: new Contract(
-              TokenAddresses[`${chain.id}`]["TheRisk"],
+              TokenAddresses[chain.id.toString()]["TheRisk"],
               TheRiskABI.abi,
               signer || provider
             ),
             MockUSDT: new Contract(
-              TokenAddresses[`${chain.id}`]["MockUSDT"],
+              TokenAddresses[chain.id.toString()]["MockUSDT"],
               ERC20ABI.abi,
               signer || provider
             ),
@@ -66,28 +66,30 @@ export const TokensProvider = ({ children }: { children: ReactNode }) => {
       chain?.id && getContractAddressesForChainOrThrow(chain?.id).exchangeProxy,
     [chain?.id]
   );
-  const loadBalances = useCallback(async () => {
-    if (!contracts.TheRisk || !contracts.MockUSDT || !address) {
+  const loadBalances = useCallback(async (account: string) => {
+    if (!contracts.TheRisk || !contracts.MockUSDT || !account) {
       return;
     }
 
     setBalances({
-      TheRisk: utils.formatEther(await contracts.TheRisk.balanceOf(address)),
-      MockUSDT: utils.formatEther(await contracts.MockUSDT.balanceOf(address)),
+      TheRisk: utils.formatEther(await contracts.TheRisk.balanceOf(account)),
+      MockUSDT: utils.formatEther(await contracts.MockUSDT.balanceOf(account)),
     });
     setAllowances({
       TheRisk: utils.formatEther(
-        await contracts.TheRisk.allowance(address, zeroXProxyAddress)
+        await contracts.TheRisk.allowance(account, zeroXProxyAddress)
       ),
       MockUSDT: utils.formatEther(
-        await contracts.MockUSDT.allowance(address, zeroXProxyAddress)
+        await contracts.MockUSDT.allowance(account, zeroXProxyAddress)
       ),
     });
     console.log("Loaded balances and allowances.");
-  }, [chain?.id, address]);
+  }, [contracts]);
 
   useEffect(() => {
-    loadBalances();
+    if (address) {
+      loadBalances(address);
+    }
   }, [address, chain?.id]);
 
   return (
