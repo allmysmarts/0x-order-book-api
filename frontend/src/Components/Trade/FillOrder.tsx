@@ -1,23 +1,108 @@
 import React, { useState, useMemo } from "react";
+import { useAccount, useSigner, useNetwork } from "wagmi";
+import { Contract, utils, constants } from "ethers";
+import { LimitOrder } from "@0x/protocol-utils";
 
+import { getContractAddressesForChainOrThrow } from "@0x/contract-addresses";
+
+import ExchangeProxyABI from "../../ABIs/ExchangeProxy.json";
 import { useTokens } from "../../Contexts/TokensContext";
 import { useOrderbooks } from "../../Contexts/OrderbookContext";
 
 function FillOrder() {
   const [pending, setPending] = useState(false);
   const [sellAmount, setSellAmount] = useState<number>(1);
-  const [sellPrice, setSellPrice] = useState<number>(1);
 
+  const { data: signer } = useSigner();
+  const { chain } = useNetwork();
+  const { address } = useAccount();
+
+  const { contracts, balances, allowances, loadBalances } = useTokens();
+  const { orders, loadOrders, selectedOrderHash } = useOrderbooks();
+
+  const activeOrder = useMemo(
+    () =>
+      orders.find((order) => order.metaData.orderHash === selectedOrderHash),
+    [orders, selectedOrderHash]
+  );
+
+  const sellPrice = useMemo(
+    () =>
+      activeOrder
+        ? Number(utils.formatEther(activeOrder.order.makerAmount)) /
+          Number(utils.formatEther(activeOrder.order.takerAmount))
+        : 0,
+    [activeOrder]
+  );
   const buyAmount = useMemo(
     () => sellAmount * sellPrice,
     [sellAmount, sellPrice]
   );
 
-  const { contracts, balances, allowances, loadBalances } = useTokens();
-
   const fillOrder = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setPending(true);
+    console.log("active order: ", activeOrder.metaData.orderHash);
+    console.log("sell amount: ", sellAmount);
 
-  }
+    if (
+      !chain ||
+      chain.unsupported ||
+      !contracts["MockUSDT"] ||
+      !signer ||
+      !address
+    ) {
+      setPending(false);
+      return;
+    }
+
+    const exchangeProxy = getContractAddressesForChainOrThrow(
+      chain?.id
+    ).exchangeProxy;
+
+    if (parseInt(allowances["MockUSDT"]) < sellAmount) {
+      try {
+        const txn = await contracts["MockUSDT"]
+          .connect(signer)
+          .approve(exchangeProxy, constants.MaxUint256);
+        await txn.wait();
+      } catch (e) {
+        console.log("Failed to approve MockUSDT.");
+        setPending(false);
+        return;
+      }
+    }
+
+    const proxyContract = new Contract(
+      exchangeProxy,
+      ExchangeProxyABI.abi,
+      signer
+    );
+    // get protocol fee multiplier
+    const protocolFeeMultiplier =
+      await proxyContract.getProtocolFeeMultiplier();
+    console.log("ProtocolFeeMultiplier: ", protocolFeeMultiplier);
+
+    try {
+      // create limit order
+      const limitOrder = new LimitOrder(activeOrder.order);
+      const txn = await proxyContract.fillLimitOrder(
+        limitOrder,
+        activeOrder.order.signature,
+        utils.parseEther(sellAmount.toString())
+      );
+      await txn.wait();
+    } catch(e) {
+      console.log("Failed to fill order.");
+      setPending(false);
+      return;
+    }
+
+    // refresh balances
+    await loadBalances(address);
+    await loadOrders();
+    setPending(false);
+  };
 
   return (
     <form className="border rounded p-4 my-2" onSubmit={fillOrder}>
@@ -51,7 +136,7 @@ function FillOrder() {
             id="limit-price-input"
             placeholder="Price"
             value={sellPrice}
-            onChange={(e) => setSellPrice(e.target.valueAsNumber)}
+            readOnly
           />
           <div className="input-group-append">
             <div className="input-group-text">TheRisk</div>
@@ -85,7 +170,7 @@ function FillOrder() {
       <button
         className="btn btn-primary btn-block"
         type="submit"
-        disabled={pending}
+        disabled={pending || !selectedOrderHash}
       >
         Fill Order
       </button>

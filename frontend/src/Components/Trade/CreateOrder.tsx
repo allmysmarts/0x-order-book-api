@@ -4,10 +4,9 @@ import { utils as etherUtils, constants as etherConstants } from "ethers";
 import { LimitOrder } from "@0x/protocol-utils";
 import { BigNumber } from "@0x/utils";
 import { getContractAddressesForChainOrThrow } from "@0x/contract-addresses";
-
-import { ApiEndpoints, TokenAddresses } from "../../Constants";
 import axios from "axios";
 
+import { ApiEndpoints, TokenAddresses } from "../../Constants";
 import { useTokens } from "../../Contexts/TokensContext";
 import { useOrderbooks } from "../../Contexts/OrderbookContext";
 
@@ -58,7 +57,6 @@ function CreateOrder() {
         setPending(false);
         return;
       }
-      await loadBalances(address);
     }
 
     // create limit order
@@ -115,6 +113,8 @@ function CreateOrder() {
     }
 
     setPending(false);
+    setSellAmount(1)
+    setSellPrice(1)
   };
 
   return (
