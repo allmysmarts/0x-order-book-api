@@ -47,7 +47,6 @@ function CreateOrder() {
       chain?.id
     ).exchangeProxy;
     // check allowance to exchangeProxy, and if insufficient then approve
-    /*
     if (parseInt(allowances["TheRisk"]) < sellAmount) {
       try {
         const txn = await contracts["TheRisk"]
@@ -61,7 +60,6 @@ function CreateOrder() {
       }
       await loadBalances(address);
     }
-    */
 
     // create limit order
     const order = new LimitOrder({
@@ -154,7 +152,7 @@ function CreateOrder() {
             onChange={(e) => setSellPrice(e.target.valueAsNumber)}
           />
           <div className="input-group-append">
-            <div className="input-group-text">mockUSDT</div>
+            <div className="input-group-text">MockUSDT</div>
           </div>
         </div>
       </div>
@@ -186,7 +184,7 @@ function CreateOrder() {
 
         <div className="d-flex">
           <select className="form-control mr-2" id="buy-token">
-            <option>mockUSDT</option>
+            <option>MockUSDT</option>
           </select>
 
           <input

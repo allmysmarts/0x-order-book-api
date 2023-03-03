@@ -9,15 +9,15 @@ Try running some of the following tasks:
 npx hardhat clean
 npx hardhat compile
 npx hardhat test
-npx hardhat --network goerli run scripts/deploy.js
+npx hardhat --network polygon run scripts/deploy.js
 ```
 
 ```shell
-npx hardhat --network goerli verify --contract "contracts/TheRisk.sol:TheRisk" 0x52eC4c36663AeAF99642542d22a0152cA4295467
-npx hardhat --network goerli verify --contract "contracts/MockUSDT.sol:MockUSDT" 0xCC288708225Cd10f05c16892AD49f04654c0e199
+npx hardhat --network polygon verify --contract "contracts/TheRisk.sol:TheRisk" 0x4098FFb7566b971f272529a36480748cAc55871e
+npx hardhat --network polygon verify --contract "contracts/MockUSDT.sol:MockUSDT" 0xcC92a2E2FBF44dc82fBfb4a00ed09ACE1f19E8cD
 ```
 
-## Deployed contract addresses (Goerli)
-TheRisk: [0x52eC4c36663AeAF99642542d22a0152cA4295467](https://goerli.etherscan.io/address/0x52eC4c36663AeAF99642542d22a0152cA4295467)
+## Deployed contract addresses (Polygon)
+TheRisk: [0x4098FFb7566b971f272529a36480748cAc55871e](https://polygonscan.com/address/0x4098FFb7566b971f272529a36480748cAc55871e)
 
-MockUSDT: [0xCC288708225Cd10f05c16892AD49f04654c0e199](https://goerli.etherscan.io/address/0xCC288708225Cd10f05c16892AD49f04654c0e199)
+MockUSDT: [0xcC92a2E2FBF44dc82fBfb4a00ed09ACE1f19E8cD](https://polygonscan.com/address/0xcC92a2E2FBF44dc82fBfb4a00ed09ACE1f19E8cD)

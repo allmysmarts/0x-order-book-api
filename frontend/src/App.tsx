@@ -1,6 +1,7 @@
 import React from "react";
-import { WagmiConfig, createClient, configureChains, goerli, mainnet } from "wagmi";
-import { infuraProvider } from "wagmi/providers/infura";
+import { WagmiConfig, createClient, configureChains } from "wagmi";
+import { polygon } from "wagmi/chains"
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 
@@ -11,9 +12,9 @@ import Main from "./Components/Main";
 // Configure chains & providers with the Alchemy provider.
 // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
 const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, goerli],
+  [polygon],
   [
-    infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID || "" }),
+    alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY || "" }),
     publicProvider(),
   ]
 );

@@ -17,6 +17,12 @@ module.exports = {
       chainId: 1,
       gasPrice: "auto",
       accounts: [process.env.PRIVATE_KEY],
+    },
+    polygon: {
+      url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
+      chainId: 137,
+      gasPrice: "auto",
+      accounts: [process.env.PRIVATE_KEY],
     }
   },
   etherscan: {
